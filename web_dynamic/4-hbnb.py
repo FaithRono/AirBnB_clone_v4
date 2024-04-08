@@ -20,7 +20,7 @@ import uuid
 app = Flask(__name__)
 
 
-@app.route('/3-hbnb/')
+@app.route('/4-hbnb/')
 def hbnb():
     states = storage.all("State").values()
     amenities = storage.all("Amenity").values()
@@ -35,7 +35,7 @@ def hbnb():
                 places.append(["{} {}".format(
                     v.first_name, v.last_name), place])
     places.sort(key=lambda x: x[1].name)
-    return render_template("3-hbnb.html",
+    return render_template("4-hbnb.html",
                            amenities=amenities, result=states, places=places,
                            cache_id=cache_id)
 

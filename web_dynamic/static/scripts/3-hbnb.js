@@ -1,53 +1,59 @@
-$(document).ready(function () {
-  $.ajax({
-    url: "http://0.0.0.0:5001/api/v1/status/",
-    type: "GET",
-    success: function(response) {
-      if (response.status === "OK") {
-        $("#api_status").addClass("availbale");
-      } else {
-        $("#api_status").removeClass("available");
-      }
-    },
-  });
-
-  $.ajax({
-    type: 'POST',
-    url: 'http://0.0.0.0:5001/api/v1/places_search/',
-    contentType: 'application/json',
-    data: JSON.stringify({})
-    success: function (data) {
-      for (const place of data) {
-        const template = `<article>
-            <div class="title">
-                <h2>${place.name}</h2>
-                <div class="price_by_night">$${place.price_by_night}</div>
-            </div>
-            <div class="information">
-                <div class="max_guest">
-                    <span>Guests: ${place.max_guest}</span>
-                </div>
-                <div class="number_rooms">
-                    <span>Bedrooms: ${place.number_rooms}</span>
-                </div>
-                <div class="number_bathrooms">
-                    <span>Bathrooms: ${place.number_bathrooms}</span>
-                </div>
-            </div>
-            <div class="description">${place.description}</div>
-        </article>`;
-        $('section.places').append(template);
-      }
-    }
-  });
-
-  const checked_amenities = {};
-    $("li input[type=checkbox]").change(function () {
-      if (this.checked) {
-        checked_amenities[this.dataset.name] = this.dataset.id;
-      } else {
-        delete checked_amenities[this.dataset.name];
-      }
-      $(".amenities h4").text(Object.keys(checked_amenities).sort().join(", "));
-  });
-}); 
+<!DOCTYPE HTML>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" type="text/css" href="../static/styles/4-common.css?{{cache_id}}" />
+    <link rel="stylesheet" type="text/css" href="../static/styles/3-header.css?{{cache_id}}" />
+    <link rel="stylesheet" type="text/css" href="../static/styles/3-footer.css?{{cache_id}}" />
+    <link rel="stylesheet" type="text/css" href="../static/styles/6-filters.css?{{cache_id}}" />
+    <link rel="stylesheet" type="text/css" href="../static/styles/8-places.css?{{cache_id}}" />
+    <link rel="icon" type="image/png" href="../static/images/icon.png" />
+    <title>AirBnB clone</title>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script src="../static/scripts/3-hbnb.js?{{cache_id}}"></script>
+  </head>
+  <body>
+    <header>
+      <div id="api_status" class="available">
+      </div>
+    </header>
+    <div class="container">
+      <section class="filters">
+	<div class="locations">
+	  <h3>States</h3>
+	  <h4>&nbsp;</h4>
+	  <ul class="popover">
+	      {% for state in result|sort(attribute='name') %}
+                 <LI><h2>{{state.name}}</h2>
+                    <UL class="small_list">
+		       {% for city in state.cities|sort(attribute='name') %}
+                         <LI>{{city.name}}</LI>
+		       {% endfor %}
+                    </UL>
+                 </LI>
+	       {% endfor %}
+	  </ul>
+	</div><!-- end locations, used for display-inline
+		--><div class="amenities">
+	  <h3>Amenities</h3>
+	  <h4>&nbsp;</h4>
+	  <ul class="popover small-list">
+	      {% for a in amenities|sort(attribute='name') %}
+	        <li>
+		  <input type="checkbox" data-id="{{a.id}}" data-name="{{a.name}}">
+		  <span style="margin-left:10px;">{{ a.name }}</span>
+		</li>
+	      {% endfor %}
+	  </ul>
+	</div> <!-- end amenities -->
+	<button>Search</button>
+      </section> <!-- end filters -->
+      <section class="places">
+	<h1>Places</h1>
+      </section> <!-- end places -->
+    </div> <!-- end container -->
+    <footer>
+      Holberton School
+    </footer>
+  </body>
+</html>
